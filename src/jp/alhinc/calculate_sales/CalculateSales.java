@@ -37,14 +37,19 @@ public class CalculateSales {
 		}
 
 		// ※ここから集計処理を作成してください。(処理内容2-1、2-2)
+		//listFilesを使用して、指定したパスに存在する全てのファイル(またはディレクトリ)の情報を配列filesに格納
+		File[] files = new File(args[0]).listFiles();
+		// "C:\Users\trainee1347\Desktop\売上集計課題"
 
-
-
+		// for文を使って指定したパスに存在する全てのファイル名を取得
+		for (int i = 0; i < files.length; i++) {
+			files[i].getName();
+			System.out.println(files[i].getName());
+		}
 		// 支店別集計ファイル書き込み処理
 		if(!writeFile(args[0], FILE_NAME_BRANCH_OUT, branchNames, branchSales)) {
 			return;
 		}
-
 	}
 
 	/**
@@ -69,7 +74,10 @@ public class CalculateSales {
 			while((line = br.readLine()) != null) {
 				// ※ここの読み込み処理を変更してください。(処理内容1-2)
 				String[] items = line.split(",");
-				System.out.println(line);
+/*				branchNames.put("支店コード","支店名");
+				branchSales.put("支店コード", 0L);*/
+				branchNames.put(items[0],items[1]);
+				branchSales.put(items[0], 0L);
 			}
 
 		} catch(IOException e) {
@@ -104,5 +112,7 @@ public class CalculateSales {
 
 		return true;
 	}
+
+
 
 }
