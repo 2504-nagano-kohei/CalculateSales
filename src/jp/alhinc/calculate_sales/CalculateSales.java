@@ -49,9 +49,9 @@ public class CalculateSales {
 
 		// for文を使って指定したパスに存在する全てのファイル名を取得
 		for (int i = 0; i < files.length; i++) {
-			files[i].getName();
 			// 取得したファイル名の中でファイル名が「数字8桁.rcd」なのか判定
-			if (files[i].getName().matches("^[0-9]{8}.+rcd$")) {
+			//「.…任意の1文字」「+…1回以上繰り返し」
+			if (files[i].getName().matches("^[0-9]{8}[.]rcd$")) {
 				// 正規表現に一致したファイルをList<File>型の変数rcdFilesに格納
 				rcdFiles.add(files[i]);
 			}
@@ -68,22 +68,22 @@ public class CalculateSales {
 				br = new BufferedReader(fr);
 
 				String line;
-				List<String> data = new ArrayList<>();
+				List<String> FileData = new ArrayList<>();
 				// 一行ずつ読み込む
 				while ((line = br.readLine()) != null) {
-					data.add(line);
+					FileData.add(line);
 					//売上ファイルの1行目には支店コード、2行目には売上金額が入っている
 				}
 
 				//売上ファイルから読み込んだ売上金額をMapに加算していく為、型の変換を行う
-				long fileSale = Long.parseLong(data.get(1));
+				long fileSale = Long.parseLong(FileData.get(1));
 
 				//読み込んだ売上⾦額を加算
 				//Long saleAmount = 売上金額を入れたMap.get(⽀店コード) + long に変換した売上⾦額;
-				Long saleAmount = branchSales.get(data.get(0)) + fileSale;
+				Long saleAmount = branchSales.get(FileData.get(0)) + fileSale;
 
 				//加算した売上⾦額をMapに追加
-				branchSales.put(data.get(0), saleAmount);
+				branchSales.put(FileData.get(0), saleAmount);
 			} catch (IOException e) {
 				System.out.println(UNKNOWN_ERROR);
 				return;
@@ -121,7 +121,15 @@ public class CalculateSales {
 		BufferedReader br = null;
 
 		try {
+			// 支店定義ファイルを開く
 			File file = new File(path, fileName);
+			// ファイルの存在チェック
+			if (!file.exists()) {
+				// 支店定義ファイルが存在しない場合、コンソールにエラーメッセージを表示、falseを返して処理を終了させる
+				System.out.println(FILE_NOT_EXIST);
+				return false;
+			}
+			// チェックを通過したら開いたファイルを読み込む
 			FileReader fr = new FileReader(file);
 			br = new BufferedReader(fr);
 
@@ -130,6 +138,15 @@ public class CalculateSales {
 			while ((line = br.readLine()) != null) {
 				// ※ここの読み込み処理を変更してください。(処理内容1-2)
 				String[] items = line.split(",");
+				// ファイルのフォーマットチェック（↓チェック内容）
+				// 仕様通りカンマで区切られていた場合は配列itemsに格納されている要素数は2つになるはず
+				// 支店コードが3桁の数字で記載されているか
+				// どちらか一方でも条件に該当していなければエラーメッセージを表示し、falseを返して処理を終了させる
+				if (items.length != 2 || !items[0].matches("[0-9]{3}")) {
+					System.out.println(FILE_INVALID_FORMAT);
+					return false;
+				}
+				// チェックを通過したらMapに要素を追加
 				branchNames.put(items[0], items[1]);
 				branchSales.put(items[0], 0L);
 			}
@@ -176,7 +193,7 @@ public class CalculateSales {
 			for (String key : branchSales.keySet()) {
 				// keyという変数には、Mapから取得したキーが代入される
 				// 拡張for文で繰り返されている為、1つ目のキーが取得できたら、
-				// 2つ目の取得...といったように、次々とkeyという変数に上書きされていきます。
+				// 2つ目の取得...といったように、次々とkeyという変数に上書きされていく
 
 				// writeメソッドで書き込んでいく
 				bw.write(key + "," + branchNames.get(key) + "," + branchSales.get(key));
@@ -200,5 +217,4 @@ public class CalculateSales {
 		}
 		return true;
 	}
-
 }
