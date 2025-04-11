@@ -49,9 +49,9 @@ public class CalculateSales {
 
 		// for文を使って指定したパスに存在する全てのファイル名を取得
 		for (int i = 0; i < files.length; i++) {
-			files[i].getName();
 			// 取得したファイル名の中でファイル名が「数字8桁.rcd」なのか判定
-			if (files[i].getName().matches("^[0-9]{8}.+rcd$")) {
+			//「.…任意の1文字」「+…1回以上繰り返し」
+			if (files[i].getName().matches("^[0-9]{8}[.]rcd$")) {
 				// 正規表現に一致したファイルをList<File>型の変数rcdFilesに格納
 				rcdFiles.add(files[i]);
 			}
@@ -68,22 +68,22 @@ public class CalculateSales {
 				br = new BufferedReader(fr);
 
 				String line;
-				List<String> data = new ArrayList<>();
+				List<String> FileData = new ArrayList<>();
 				// 一行ずつ読み込む
 				while ((line = br.readLine()) != null) {
-					data.add(line);
+					FileData.add(line);
 					//売上ファイルの1行目には支店コード、2行目には売上金額が入っている
 				}
 
 				//売上ファイルから読み込んだ売上金額をMapに加算していく為、型の変換を行う
-				long fileSale = Long.parseLong(data.get(1));
+				long fileSale = Long.parseLong(FileData.get(1));
 
 				//読み込んだ売上⾦額を加算
 				//Long saleAmount = 売上金額を入れたMap.get(⽀店コード) + long に変換した売上⾦額;
-				Long saleAmount = branchSales.get(data.get(0)) + fileSale;
+				Long saleAmount = branchSales.get(FileData.get(0)) + fileSale;
 
 				//加算した売上⾦額をMapに追加
-				branchSales.put(data.get(0), saleAmount);
+				branchSales.put(FileData.get(0), saleAmount);
 			} catch (IOException e) {
 				System.out.println(UNKNOWN_ERROR);
 				return;
@@ -200,5 +200,4 @@ public class CalculateSales {
 		}
 		return true;
 	}
-
 }
