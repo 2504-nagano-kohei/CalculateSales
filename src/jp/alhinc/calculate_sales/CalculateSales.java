@@ -1,8 +1,10 @@
 package jp.alhinc.calculate_sales;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,24 +72,32 @@ public class CalculateSales {
 				// 一行ずつ読み込む
 				while ((line = br.readLine()) != null) {
 					data.add(line);
+					//売上ファイルの1行目には支店コード、2行目には売上金額が入っている
 				}
 
-			//売上ファイルの1行目には支店コード、2行目には売上金額が入っている
+				//売上ファイルから読み込んだ売上金額をMapに加算していく為、型の変換を行う
+				long fileSale = Long.parseLong(data.get(1));
 
-			//売上ファイルから読み込んだ売上金額をMapに加算していく為、型の変換を行う
-			//※詳細は後述で説明
-			long fileSale = Long.parseLong(売上金額);
+				//読み込んだ売上⾦額を加算
+				//Long saleAmount = 売上金額を入れたMap.get(⽀店コード) + long に変換した売上⾦額;
+				Long saleAmount = branchSales.get(data.get(0)) + fileSale;
 
-			//読み込んだ売上⾦額を加算
-			//※詳細は後述で説明
-			Long saleAmount = 売上金額を入れたMap.get(⽀店コード) + long に変換した売上⾦額;
-
-			//加算した売上⾦額をMapに追加
-
+				//加算した売上⾦額をMapに追加
+				branchSales.put(data.get(0), saleAmount);
 			} catch (IOException e) {
-
+				System.out.println(UNKNOWN_ERROR);
+				return;
 			} finally {
-
+				// ファイルを開いている場合
+				if (br != null) {
+					try {
+						// ファイルを閉じる
+						br.close();
+					} catch (IOException e) {
+						System.out.println(UNKNOWN_ERROR);
+						return;
+					}
+				}
 			}
 		}
 
@@ -155,6 +165,39 @@ public class CalculateSales {
 			Map<String, Long> branchSales) {
 		// ※ここに書き込み処理を作成してください。(処理内容3-1)
 
+		BufferedWriter bw = null;
+		// ファイルを作成して書き込む
+		try {
+			File file = new File(path, fileName);
+			FileWriter fw = new FileWriter(file);
+			bw = new BufferedWriter(fw);
+
+			// Mapから全てのKeyを取得
+			for (String key : branchSales.keySet()) {
+				// keyという変数には、Mapから取得したキーが代入される
+				// 拡張for文で繰り返されている為、1つ目のキーが取得できたら、
+				// 2つ目の取得...といったように、次々とkeyという変数に上書きされていきます。
+
+				// writeメソッドで書き込んでいく
+				bw.write(key + "," + branchNames.get(key) + "," + branchSales.get(key));
+				// 改行
+				bw.newLine();
+			}
+		} catch (IOException e) {
+			System.out.println(UNKNOWN_ERROR);
+			return false;
+		} finally {
+			// ファイルを開いている場合
+			if (bw != null) {
+				try {
+					// ファイルを閉じる
+					bw.close();
+				} catch (IOException e) {
+					System.out.println(UNKNOWN_ERROR);
+					return false;
+				}
+			}
+		}
 		return true;
 	}
 
