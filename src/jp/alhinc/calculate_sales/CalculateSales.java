@@ -196,7 +196,7 @@ public class CalculateSales {
 				// 仕様通りカンマで区切られていた場合は配列itemsに格納されている要素数は2つになるはず
 				// 支店コードが3桁の数字で記載されているか
 				// どちらか一方でも条件に該当していなければエラーメッセージを表示し、falseを返して処理を終了させる
-				if (items.length != 2 || !items[0].matches("[0-9]{3}")) {
+				if (items.length != 2 || !items[0].matches("^[0-9]{3}$")) {
 					System.out.println(FILE_INVALID_FORMAT);
 					return false;
 				}
