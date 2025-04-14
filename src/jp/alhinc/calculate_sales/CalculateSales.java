@@ -238,8 +238,8 @@ public class CalculateSales {
 			// Mapから全てのKeyを取得
 			for (String key : branchSales.keySet()) {
 				// keyという変数には、Mapから取得したキーが代入される
-				// 拡張for文で繰り返されている為、1つ目のキーが取得できたら、
-				// 2つ目の取得...といったように、次々とkeyという変数に上書きされていく
+				// 拡張for文で繰り返されている為、1つ目のキーが取得できたら、2つ目の取得
+				// ...といったように、次々とkeyという変数に上書きされていく
 
 				// writeメソッドで書き込んでいく
 				bw.write(key + "," + branchNames.get(key) + "," + branchSales.get(key));
